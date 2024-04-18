@@ -1,12 +1,13 @@
 from tokenizing import tokenize
 
 def main():
-    srcCode = "1 + 5 + 1 + 5 + 7"
+    srcCode = "1 + 16 / 4"
     final_list = tokenize(srcCode)
     # for item in final_list:
     #     print(item)
 
-    print(parserEX(final_list))
+    total = parserEX(final_list)
+    print(total)
 
 class TreeNode:
     def __init__(self,srcToken):
@@ -21,61 +22,50 @@ def parserEX(srcList):
         i = 0
         while i < len(srcList):
             if srcList[i][0] == '*':
-                leftTree = TreeNode(srcList[i-1]) # Gets the value before the operator
-                rightTree = TreeNode(srcList[i+1]) # Gets the value after the operator
-                result = str(int(leftTree.value) * int(rightTree.value)) # multiplys the two values 
-                srcList[i-1][0] = result # puts the resulting value back into the main list
-                srcList[i-1][1] = 'NUMB' # sets the token to a number
-                parserEX(srcList[i-1:i+2]) # inputs the new list getting rid of the operation thats been done 
+                leftTree = srcList[i-1] # Gets the value before the operator
+                rightTree = srcList[i+1] # Gets the value after the operator
+                result = str(int(leftTree[0][0]) * int(rightTree[0][0])) # multiplys the two values 
+                srcList[i] = [[result, 'NUMB']] 
+                del srcList[i+1]
+                del srcList[i-1]
+                return parserEX(srcList)
             i += 1
+        i = 0
         while i < len(srcList):
             if srcList[i][0] == '/':
-                leftTree = TreeNode(srcList[i-1]) # Gets the value before the operator
-                rightTree = TreeNode(srcList[i+1]) # Gets the value after the operator
-                result = str(int(leftTree.value) * int(rightTree.value)) # multiplys the two values 
-                srcList[i-1][0] = result # puts the resulting value back into the main list
-                srcList[i-1][1] = 'NUMB' # sets the token to a number
-                parserEX(srcList[i-1:i+2]) # inputs the new list getting rid of the operation thats been done 
+                leftTree = srcList[i-1] # Gets the value before the operator
+                rightTree = srcList[i+1] # Gets the value after the operator
+                result = str(int(int(rightTree[0][0]) / int(leftTree[0][0]))) # divides the two values, it int casts meaning that you will not see decimals
+                srcList[i] = [[result, 'NUMB']] 
+                del srcList[i+1]
+                del srcList[i-1]
+                return parserEX(srcList)
             i += 1
-        while i < len(srcList):
+        i = 0
+        while i < len(srcList): 
             if srcList[i][0] == '+':
-                leftTree = TreeNode(srcList[i-1]) # Gets the value before the operator
-                rightTree = TreeNode(srcList[i+1]) # Gets the value after the operator
-                result = str(int(leftTree.value) * int(rightTree.value)) # multiplys the two values 
-                srcList[i-1][0] = result # puts the resulting value back into the main list
-                srcList[i-1][1] = 'NUMB' # sets the token to a number
-                parserEX(srcList[i-1:i+2]) # inputs the new list getting rid of the operation thats been done 
+                leftTree = srcList[i-1] # Gets the value before the operator
+                rightTree = srcList[i+1] # Gets the value after the operator
+                print (srcList)
+                result = str(int(leftTree[0][0]) + int(rightTree[0][0])) # adds the two values
+                srcList[i] = [[result, 'NUMB']] 
+                del srcList[i+1]
+                del srcList[i-1]
+                return parserEX(srcList)
             i += 1
+        i = 0
         while i < len(srcList):
             if srcList[i][0] == '-':
-                leftTree = TreeNode(srcList[i-1]) # Gets the value before the operator
-                rightTree = TreeNode(srcList[i+1]) # Gets the value after the operator
-                result = str(int(leftTree.value) * int(rightTree.value)) # multiplys the two values 
-                srcList[i-1][0] = result # puts the resulting value back into the main list
-                srcList[i-1][1] = 'NUMB' # sets the token to a number
-                parserEX(srcList[i-1:i+2]) # inputs the new list getting rid of the operation thats been done
-            i += 1 
-            
-            # leftTree = TreeNode(srcList[0])
-            # op = TreeNode(srcList[1])
-            # rightTree = parserEX(srcList[2:])
-
-            #possibly use this
-            # if srcList[i][1] in ['*', '/', '+', '-']:
-            # leftTree = TreeNode(srcList[i-1]) # Gets the value before the operator
-            # rightTree = TreeNode(srcList[i+1]) # Gets the value after the operator
-            # if srcList[i][1] == '*':
-            #     result = str(int(leftTree.value) * int(rightTree.value)) # multiplys the two values 
-            # elif srcList[i][1] == '/':
-            #     result = str(int(leftTree.value) / int(rightTree.value)) # divides the two values 
-            # elif srcList[i][1] == '+':
-            #     result = str(int(leftTree.value) + int(rightTree.value)) # adds the two values 
-            # elif srcList[i][1] == '-':
-            #     result = str(int(leftTree.value) - int(rightTree.value)) # subtracts the two values 
+                leftTree = srcList[i-1] # Gets the value before the operator
+                rightTree = srcList[i+1] # Gets the value after the operator
+                result = str(int(leftTree[0][0]) - int(rightTree[0][0])) # subtracts the two values
+                srcList[i] = [[result, 'NUMB']] 
+                del srcList[i+1]
+                del srcList[i-1]
+                return parserEX(srcList) 
+            i += 1
     else:
-        #print(srcList[0])
-        return srcList
-
+        return srcList[0][0]
 
 main()
 

@@ -16,6 +16,8 @@ def tokenize(srcCode): # tokenizes all the input code
         "9" : "NUMB",
         "+" : "PLUS",
         "*" : "TIMES",
+        "-" : "SUB",
+        "/" : "DIV"
     }
     
     num_holder = ""
