@@ -1,7 +1,7 @@
 from tokenizing import tokenize
 
 def main():
-    srcCode = "5 + 5 * 10 - 5" # one issue to fix is that tokenize does not work when there are not spaces, ex it will not work for 5*5*5
+    srcCode = "2 * ( 5 + 5 + 5 )" # one issue to fix is that tokenize does not work when there are not spaces, ex it will not work for 5*5*5 even (5*5*5) will not work
     final_list = tokenize(srcCode)
     for item in final_list:
         print(item)
@@ -16,7 +16,29 @@ class TreeNode:
         self.right = None
 
 def parserEX(srcList):
+
     if len(srcList) > 2:
+        i = 0
+        while i < len(srcList):
+            if srcList[i][0] == '(':
+                j = i + 1 # starts at index after open parenthesis
+                parenlist = []
+                while j < len(srcList): # start list at open parenthesis and search for another open or a close
+                    parenlist.append(srcList[j])
+                    if srcList[j][0] == '(':
+                        pass
+                    elif srcList[j][0] == ')':
+                        del parenlist[len(parenlist)-1] # deletes closed parenthesis from list
+                        z = j # sets z = to j
+                        while z > i: # this deletes everything from the list between the open and closed parenthesis 
+                            del srcList[z]
+                            z -= 1
+                        srcList[i] = parserEX(parenlist)
+                        print(srcList)
+                        return parserEX(srcList)
+                    j += 1
+
+            i += 1
         i = 0
         while i < len(srcList):
             if srcList[i][0] == '*' or srcList[i][0] == '/':
@@ -46,7 +68,7 @@ def parserEX(srcList):
                 return parserEX(srcList) # returns the modified list, performs recursion
             i += 1
     else:
-        return srcList[0][0]
+        return srcList[0]
         
 
 
