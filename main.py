@@ -1,7 +1,7 @@
 from tokenizing import tokenize
 
 def main():
-    srcCode = "( 2 * ( 5 + 5 + 5 ) + 2 )" # one issue to fix is that tokenize does not work when there are not spaces, ex it will not work for 5*5*5 even (5*5*5) will not work
+    srcCode = "( 2 * ( 5 + 5 + 5 ) + 5 )" # one issue to fix is that tokenize does not work when there are not spaces, ex it will not work for 5*5*5 even (5*5*5) will not work
     final_list = tokenize(srcCode)
     for item in final_list:
         print(item)
@@ -22,27 +22,14 @@ def parserEX(srcList):
             if srcList[i][0] == '(':
                 j = i + 1 # starts at index after open parenthesis
                 parenlist = []
-                while j < len(srcList): # start list at open parenthesis and search for another open or a close
+                while j < len(srcList) and srcList[j][0] != ')': # start list at open parenthesis and search for another open or a close
                     parenlist.append(srcList[j])
-                    if srcList[j][0] == '(': # checks for nested parenthesis
-                        srcList[j] = parserEX(srcList[j:])
-                        return parserEX(srcList)
-                        # srcList[j] = parserEX(srcList[j:]) # inputs everything after (
-                        # print()
-                        # print(srcList[j])
-                        # return parserEX(srcList)
-                    elif srcList[j][0] == ')':
-                        del parenlist[len(parenlist)-1] # deletes closed parenthesis from list
-                        z = j # sets z = to j
-                        while z > i: # this deletes everything from the list between the open and closed parenthesis 
-                            del srcList[z]
-                            z -= 1
-                        srcList[i] = parserEX(parenlist)
-                        print(srcList[i:j])
-                        return parserEX(srcList)
                     j += 1
-
-            i += 1
+                result = parserEX(parenlist)
+                srcList = srcList[:i] + [result] + srcList[j+1:] #[result]
+                i = 0
+            else:
+                i += 1
         i = 0
         while i < len(srcList):
             if srcList[i][0] == '*' or srcList[i][0] == '/':
@@ -73,7 +60,7 @@ def parserEX(srcList):
             i += 1
     else:
         return srcList[0]
-        
+    #return srcList[0]
 
 
 
