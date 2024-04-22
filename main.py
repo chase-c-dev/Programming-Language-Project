@@ -1,7 +1,7 @@
 from tokenizing import tokenize
 
 def main():
-    srcCode = "( 5 * ( 5 + 5 ) / 2 )" # one issue to fix is that tokenize does not work when there are not spaces, ex it will not work for 5*5*5 even (5*5*5) will not work
+    srcCode = "( 5 * ( 5 + 5 ) / 2 ) - 2" # one issue to fix is that tokenize does not work when there are not spaces, ex it will not work for 5*5*5 even (5*5*5) will not work
     final_list = tokenize(srcCode)
     for item in final_list:
         print(item)
@@ -78,35 +78,32 @@ class TreeNode:
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
-        self.current = 0
+        self.tracker = 0
 
     def parse(self):
         return self.get_evaluated_answer()
 
-    def equals(self, token_type):
-        if self.valuelookup(token_type):
+    def equals(self, type_of_token):
+        if self.valuelookup(type_of_token):
             self.move()
             return True
         return False
 
-    def valuelookup(self, token_type):
+    def valuelookup(self, type_of_token):
         if self.endoflist():
             return False
-        return self.get_value()[1] == token_type
+        return self.get_value()[1] == type_of_token
 
     def move(self):
         if not self.endoflist():
-            self.current += 1
-        return self.get_prior()
+            self.tracker += 1
+        return self.tokens[self.tracker - 1]
 
     def endoflist(self):
-        return self.current >= len(self.tokens)
+        return self.tracker >= len(self.tokens)
 
     def get_value(self):
-        return self.tokens[self.current]
-
-    def get_prior(self):
-        return self.tokens[self.current - 1]
+        return self.tokens[self.tracker]
 
     def get_evaluated_answer(self):
         return self.addition()
@@ -115,7 +112,7 @@ class Parser:
         result = self.multiplication()
 
         while self.equals('PLUS') or self.equals('SUB'):
-            op = self.get_prior()
+            op = self.tokens[self.tracker - 1] # gets previous value
             rightTree = self.multiplication()
             result = TreeNode([str(eval(result.value + op[0] + rightTree.value)), 'NUMB'])
 
@@ -125,7 +122,7 @@ class Parser:
         result = self.division()
 
         while self.equals('TIMES') or self.equals('DIV'):
-            op = self.get_prior()
+            op = self.tokens[self.tracker - 1] # gets previous value
             rightTree = self.division()
             result = TreeNode([str(eval(result.value + op[0] + rightTree.value)), 'NUMB'])
 
@@ -135,7 +132,7 @@ class Parser:
         result = self.subtract()
 
         while self.equals('SLASH'):
-            op = self.get_prior()
+            op = self.tokens[self.tracker - 1] # gets previous value
             rightTree = self.subtract()
             if rightTree.value == '0':
                 raise Exception("Error: Division by zero is not allowed.")
@@ -145,7 +142,7 @@ class Parser:
     
     def subtract(self):
         if self.equals('SUB'):
-            op = self.get_prior()
+            op = self.tokens[self.tracker - 1] # gets previous value
             rightTree = self.subtract()
             return TreeNode([str(eval(op[0] + rightTree.value)), 'NUMB'])
 
@@ -153,7 +150,7 @@ class Parser:
 
     def paren(self):
         if self.equals('NUMB'):
-            return TreeNode(self.get_prior())
+            return TreeNode(self.tokens[self.tracker - 1])
 
         if self.equals('LPAREN'):
             result = self.get_evaluated_answer()
@@ -183,15 +180,101 @@ main()
 # The multiplication method calls the subtract method, which handles subtract minus operations. 
 # The subtract method calls the paren method, which handles numbers and get_evaluated_answers in parentheses. 
 # The equals, valuelookup, move, endoflist, get_value, and get_prior methods are helper methods used to manipulate the tokens during parsing. 
-# The equals method valuelookups if the current token has the given type and moves to the next token if it does. The valuelookup method valuelookups if the current token has the given type. 
+# The equals method valuelookups if the tracker token has the given type and moves to the next token if it does. The valuelookup method valuelookups if the tracker token has the given type. 
 # The move method moves to the next token and returns the get_prior token. The endoflist method valuelookups if all tokens have been consumed. 
-# The get_value method returns the current token without consuming it. The get_prior method returns the get_prior token. 
+# The get_value method returns the tracker token without consuming it. The get_prior method returns the get_prior token. 
 # The parserEX function creates a Parser object and calls its parse method to parse the tokens. 
 # It then returns the result of the get_evaluated_answer. This parser can be used with the main function and the TreeNode class in your code. 
 # You can call the parserEX function with the result of the tokenize function to parse the tokens and calculate the result of the get_evaluated_answer. 
 # The print("the answer is: ", total) line in the main function will then print the result of the get_evaluated_answer. Please note that this parser does not handle errors. 
 # If the tokens do not form a valid get_evaluated_answer, the parser may crash or produce incorrect results. 
-# You may want to add error handling code to make the parser more robust. 
+# You may want to add error handling code to make the parser more robust.
+
+# class Parser:
+#     def __init__(self, tokens):
+#         self.tokens = tokens
+#         self.tracker = 0
+
+#     def parse(self):
+#         return self.get_evaluated_answer()
+
+#     def equals(self, type_of_token):
+#         if self.valuelookup(type_of_token):
+#             self.move()
+#             return True
+#         return False
+
+#     def valuelookup(self, type_of_token):
+#         if self.endoflist():
+#             return False
+#         return self.get_value()[1] == type_of_token
+
+#     def move(self):
+#         if not self.endoflist():
+#             self.tracker += 1
+#         return self.get_prior()
+
+#     def endoflist(self):
+#         return self.tracker >= len(self.tokens)
+
+#     def get_value(self):
+#         return self.tokens[self.tracker]
+
+#     def get_prior(self):
+#         return self.tokens[self.tracker - 1]
+
+#     def get_evaluated_answer(self):
+#         return self.addition()
+
+#     def addition(self):
+#         result = self.multiplication()
+
+#         while self.equals('PLUS') or self.equals('SUB'):
+#             op = self.get_prior()
+#             rightTree = self.multiplication()
+#             result = TreeNode([str(eval(result.value + op[0] + rightTree.value)), 'NUMB'])
+
+#         return result
+
+#     def multiplication(self):
+#         result = self.division()
+
+#         while self.equals('TIMES') or self.equals('DIV'):
+#             op = self.get_prior()
+#             rightTree = self.division()
+#             result = TreeNode([str(eval(result.value + op[0] + rightTree.value)), 'NUMB'])
+
+#         return result
+    
+#     def division(self):
+#         result = self.subtract()
+
+#         while self.equals('SLASH'):
+#             op = self.get_prior()
+#             rightTree = self.subtract()
+#             if rightTree.value == '0':
+#                 raise Exception("Error: Division by zero is not allowed.")
+#             result = TreeNode([str(eval(result.value + op[0] + rightTree.value)), 'NUMB'])
+
+#         return result
+    
+#     def subtract(self):
+#         if self.equals('SUB'):
+#             op = self.get_prior()
+#             rightTree = self.subtract()
+#             return TreeNode([str(eval(op[0] + rightTree.value)), 'NUMB'])
+
+#         return self.paren()
+
+#     def paren(self):
+#         if self.equals('NUMB'):
+#             return TreeNode(self.get_prior())
+
+#         if self.equals('LPAREN'):
+#             result = self.get_evaluated_answer()
+#             self.equals('RPAREN')
+#             return result
+
 
 
 # def addition(self):
