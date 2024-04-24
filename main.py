@@ -1,9 +1,10 @@
 from tokenizing import tokenize
 
 def main():
-    srcCode = "( 5 * ( 5 + 5 ) / 2 ) - 2" # one issue to fix is that tokenize does not work when there are not spaces, ex it will not work for 5*5*5 even (5*5*5) will not work
-    #srcCode = "5 / 5 * 2"
+    srcCode = "( -5 * ( 5 + 5 ) / 2  - 2)"
+    #srcCode = "(5+2) * 2"
     #srcCode = "5 - 20 + 5 + 5"
+    #srcCode = "1 - 5 + 10"
     final_list = tokenize(srcCode)
     for item in final_list:
         print(item)
